@@ -20,8 +20,8 @@ public class JwtUtil {
 
     @Value("${jwt.secret}")
     private String secretKey;
+    private static final long JWT_EXPIRATION_MS = 30 * 60 * 1000; // 30 minutes
 
-    private final long JWT_EXPIRATION_MS = 30 * 60 * 1000; // 30 minutes
 
     private Key getSigningKey() {
         return Keys.hmacShaKeyFor(secretKey.getBytes());
@@ -59,12 +59,13 @@ public class JwtUtil {
                 .setClaims(claims)
                 .setSubject(subject)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 30)) // 30 min expiry
-                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .setExpiration(new Date(System.currentTimeMillis() + JWT_EXPIRATION_MS))
+                .signWith(getSignKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    private Claims extractAllClaims(String token) {
+
+    Claims extractAllClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(getSignKey())
                 .build()
@@ -82,6 +83,7 @@ public class JwtUtil {
     private Key getSignKey() {
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey));
     }
+
 
     public boolean validateToken(String token, String username) {
         return username.equals(extractUsername(token)) && !isTokenExpired(token);

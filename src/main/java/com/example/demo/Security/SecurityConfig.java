@@ -14,6 +14,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.util.List;
 
@@ -21,7 +22,8 @@ import java.util.List;
 public class SecurityConfig {
 @Autowired
 CustomUserDetailsService userDetailsService;
-
+@Autowired
+JwtAuthenticationFilter jwtAuthenticationFilter;
     public SecurityConfig(CustomUserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
     }
@@ -31,10 +33,10 @@ CustomUserDetailsService userDetailsService;
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/users/**").permitAll()
-                        .anyRequest().authenticated())
+                        .requestMatchers("/users/authentification", "/users/register").permitAll() // Allow login/register
+                        .anyRequest().authenticated()) // Secure all other endpoints
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .build();
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class).build();
     }
 
 
