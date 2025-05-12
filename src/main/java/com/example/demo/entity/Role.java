@@ -56,8 +56,9 @@ public class Role {
             this.name = null;
         }
     }
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = true)
     @JsonIgnore
-    @ManyToOne  // Many Roles belong to One User
-    @JoinColumn(name = "user_id")
     private User user;
+
 }

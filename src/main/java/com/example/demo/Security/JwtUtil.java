@@ -20,7 +20,7 @@
 
         @Value("${jwt.secret}")
         private String secretKey;
-        private static final long JWT_EXPIRATION_MS = 30 * 60 * 1000; // 30 minutes
+        private static final long JWT_EXPIRATION_MS = 60 * 60 * 1000; // 30 minutes
 
 
 
@@ -28,10 +28,13 @@
         public String generateToken(User user) {
             Map<String, Object> claims = new HashMap<>();
 
-            // Store user attributes
+            claims.put("Nudoss", user.getNudoss());
             claims.put("userID", user.getUserID());
             claims.put("username", user.getUsername());
-            claims.put("name", user.getName());
+            claims.put("firstname", user.getFirstname());
+            claims.put("lastname", user.getLastname());
+            claims.put("phonenumber", user.getPhonenumber());
+            claims.put("email", user.getEmail());
             claims.put("matcle", user.getMatcle());
             claims.put("soccle", user.getSoccle());
             claims.put("language", user.getLanguage());

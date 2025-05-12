@@ -27,8 +27,11 @@ public class User  implements UserDetails {
 
     private String password;
     private String username;
+    private String lastname;
+    private String email ;
+    private Integer phonenumber;
     private String matcle;
-    private String name;
+    private String firstname;
     private String userID;
     private String soccle;
     private boolean hasPhoto = false;
@@ -54,19 +57,18 @@ public class User  implements UserDetails {
             this.userID = "s"+mat+"."+soc;
         }
     }
-    @JsonIgnore
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true) // One User has many Roles
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private Set<Role> roles;
-    private Collection<? extends GrantedAuthority> getAuthorities(User user) {
-        return user.getRoles().stream()
+
+    @JsonIgnore
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return roles.stream()
                 .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getModel()))
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
-    }
 
     @Override
     public boolean isAccountNonExpired() {

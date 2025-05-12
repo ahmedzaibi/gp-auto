@@ -15,8 +15,9 @@ import java.util.Map;
 @RestController
 @RequestMapping("/roles")
 public class RoleController {
-@Autowired
-RoleService roleService;
+
+private final RoleService roleService;
+
     @PutMapping("/{userId}/{roleId}/update-label")
     public ResponseEntity<String> updateRoleLabel(
             @PathVariable Long userId,
@@ -26,15 +27,20 @@ RoleService roleService;
         String newModelLabel = request.get("modelLabel");
         roleService.updateRoleLabel(userId, roleId, newModelLabel);
 
-        return ResponseEntity.ok("Role updated successfully for user ID: " + userId);
+        return ResponseEntity.ok(" Main Role successfully for user ID: " + userId);
     }
 
     public RoleController(RoleService roleService) {
         this.roleService = roleService;
     }
+    @PutMapping("/affecter/{idRole}/{idUser}")
+    public ResponseEntity<String> affecterRole(@PathVariable Long idRole,@PathVariable Long idUser){
 
-    @PostMapping
+        roleService.affectRole(idRole, idUser);
 
+        return ResponseEntity.ok(" Affecter Role successfully");
+    }
+    @PostMapping("/create")
     public Role createRole(@RequestBody Role role) {
         return roleService.createRole(role);
     }

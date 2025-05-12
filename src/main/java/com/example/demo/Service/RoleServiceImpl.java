@@ -36,20 +36,19 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public void deleteRole(Long id) {
-        roleRepository.deleteById(id);
+    public void deleteRole(Long id) {roleRepository.deleteById(id);
     }
+
 
     @Override
     public Role affectRole(long idRole, long idUser) {
-        User user = userRepository.findByNudoss(idUser);
-        Role role = roleRepository.findById(idRole).orElseThrow(() -> new RuntimeException("Role not found"));
 
-        user.getRoles().add(role);
+        Role role = roleRepository.findById(idRole).orElseThrow(() -> new RuntimeException("Role not found"));
+        role.setUser(userRepository.findByNudoss(idUser));
+        roleRepository.save(role);
+        userRepository.findByNudoss(idUser).getRoles().add(role);
         return role;
     }
-
-
     @Transactional
     public void updateRoleLabel(Long userId, Long roleId, String newModelLabel) {
         User user = userRepository.findById(userId)
